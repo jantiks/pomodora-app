@@ -23,6 +23,8 @@ class ViewController: UIViewController {
         minutes = String(format: "%02d", timeRemaining/60)
         seconds = String(format: "%02d", timeRemaining%60)
         buttonLabel.setTitle("\(minutes):\(seconds)", for: .normal)
+        UIView.setAnimationsEnabled(false)
+
     }
 
     @IBAction func buttonTapped(_ sender: UIButton) {
