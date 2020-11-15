@@ -1,13 +1,14 @@
 //
 //  SceneDelegate.swift
-//  Pomodora app
+//  timer
 //
-//  Created by Tigran on 11/15/20.
+//  Created by Tigran on 11/14/20.
 //  Copyright © 2020 Tigran. All rights reserved.
 //
 
 import UIKit
 
+@available(iOS 13.0, *)
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
