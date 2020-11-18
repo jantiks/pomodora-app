@@ -16,8 +16,8 @@ class ViewController: UIViewController {
     
     
     var timer: Timer!
-    var timeRemaining = 15
-    var restTime = 3
+    var timeRemaining = 1500
+    var restTime = 300
     var minutes = ""
     var seconds = ""
     var count = 0
@@ -25,17 +25,18 @@ class ViewController: UIViewController {
     
     
     override func viewDidLoad() {
-        countLabel.layer.cornerRadius = 20
+        super.viewDidLoad()
         countLabel.backgroundColor = .white
+        countLabel.layer.cornerRadius = 20
+        countLabel.layer.masksToBounds = true
         countLabel.textColor = .black
         countLabel.text = "\(count)"
-        super.viewDidLoad()
         
         minutes = String(format: "%02d", timeRemaining/60)
         seconds = String(format: "%02d", timeRemaining%60)
         timeLabel.text = ("\(minutes):\(seconds)")
         UIView.setAnimationsEnabled(false)
-
+        
     }
     
     @IBAction func startTapped(_ sender: UIButton) {
@@ -58,33 +59,34 @@ class ViewController: UIViewController {
         default:
             print("something went wrong")
         }
-            
-        }
-    
-    @IBAction func resetTapped(_ sender: UIButton) {
-        alert()
         
     }
     
-    func alert() {
+    @IBAction func resetTapped(_ sender: UIButton) {
+        resetAlert()
+        
+    }
+    
+    func resetAlert() {
         let alert = UIAlertController(title: "End Session", message: "Do you want to end this session?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "YES", style: .default, handler:{ action in
+        alert.addAction(UIAlertAction(title: "YES", style: .default, handler:{ _ in
             self.timer.invalidate()
-            self.timeRemaining = 15
+            self.timeRemaining = 1500
             self.minutes = String(format: "%02d", self.timeRemaining/60)
             self.seconds = String(format: "%02d", self.timeRemaining%60)
             self.timeLabel.text = ("\(self.minutes):\(self.seconds)")
             self.startButton.setTitle("Start", for: .normal)
             self.rest = !self.rest
             
-
-
+            
+            
         } ))
         alert.addAction(UIAlertAction(title: "NO", style: .cancel, handler: nil))
-
+        
         present(alert,animated: true)
     }
-//
+    
+    //
     @objc func workStep() {
         if timeRemaining > 0 {
             timeRemaining -= 1
@@ -94,7 +96,10 @@ class ViewController: UIViewController {
             startButton.setTitle("Start", for: .normal)
             count += 1
             countLabel.text = "\(count)"
-            AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+            for _ in 0...10{
+                UIDevice.vibrate()
+                sleep(1)
+            }
             
         }
         minutes = String(format: "%02d", timeRemaining/60)
@@ -106,9 +111,13 @@ class ViewController: UIViewController {
             timeRemaining -= 1
         }else {
             timer.invalidate()
-            timeRemaining = 15
+            timeRemaining = 1500
             startButton.setTitle("Start", for: .normal)
-            AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+            for _ in 0...10{
+                UIDevice.vibrate()
+                sleep(1)
+            }
+            
         }
         minutes = String(format: "%02d", timeRemaining/60)
         seconds = String(format: "%02d", timeRemaining%60)
@@ -118,3 +127,8 @@ class ViewController: UIViewController {
     
 }
 
+extension UIDevice {
+    static func vibrate() {
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+    }
+}
