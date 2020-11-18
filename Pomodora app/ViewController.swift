@@ -10,51 +10,58 @@ import UIKit
 import AudioToolbox
 
 class ViewController: UIViewController {
-    @IBOutlet weak var buttonLabel: UIButton!
-    @IBOutlet weak var stopLabel: UIButton!
+    @IBOutlet weak var timeLabel: UILabel!
+    @IBOutlet weak var startButton: UIButton!
+    @IBOutlet weak var countLabel: UILabel!
+    
     
     var timer: Timer!
     var timeRemaining = 15
     var restTime = 3
     var minutes = ""
     var seconds = ""
+    var count = 0
     var rest = false
-    var isWorking = false
     
     
     override func viewDidLoad() {
+        countLabel.layer.cornerRadius = 20
+        countLabel.backgroundColor = .white
+        countLabel.textColor = .black
+        countLabel.text = "\(count)"
         super.viewDidLoad()
         
         minutes = String(format: "%02d", timeRemaining/60)
         seconds = String(format: "%02d", timeRemaining%60)
-        buttonLabel.setTitle("\(minutes):\(seconds)", for: .normal)
+        timeLabel.text = ("\(minutes):\(seconds)")
         UIView.setAnimationsEnabled(false)
-        stopLabel.setTitle("End Session", for: .normal)
-        stopLabel.isHidden = true
 
     }
     
-    @IBAction func buttonTapped(_ sender: UIButton) {
-        stopLabel.isHidden = false
-        if !isWorking{
-            isWorking = true
+    @IBAction func startTapped(_ sender: UIButton) {
+        switch startButton.titleLabel?.text {
+        case "Start":
+            startButton.setTitle("Stop", for: .normal)
             if !rest {
-                rest = true
                 timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(workStep), userInfo: nil, repeats: true)
-                
+                rest = true
             }else {
-                rest = false
                 timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(restStep), userInfo: nil, repeats: true)
-                
+                rest = false
+                print("isworking else")
             }
-
-        }else {
+        case "Stop":
+            startButton.setTitle("Start", for: .normal)
             timer.invalidate()
-            isWorking = false
+            rest = !rest
+            
+        default:
+            print("something went wrong")
         }
-    }
+            
+        }
     
-    @IBAction func stopTapped(_ sender: UIButton) {
+    @IBAction func resetTapped(_ sender: UIButton) {
         alert()
         
     }
@@ -66,9 +73,10 @@ class ViewController: UIViewController {
             self.timeRemaining = 15
             self.minutes = String(format: "%02d", self.timeRemaining/60)
             self.seconds = String(format: "%02d", self.timeRemaining%60)
-            self.buttonLabel.setTitle("\(self.minutes):\(self.seconds)", for: .normal)
-            self.isWorking = false
-            self.stopLabel.isHidden = true
+            self.timeLabel.text = ("\(self.minutes):\(self.seconds)")
+            self.startButton.setTitle("Start", for: .normal)
+            self.rest = !self.rest
+            
 
 
         } ))
@@ -83,12 +91,15 @@ class ViewController: UIViewController {
         }else {
             timer.invalidate()
             timeRemaining = restTime
+            startButton.setTitle("Start", for: .normal)
+            count += 1
+            countLabel.text = "\(count)"
             AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
             
         }
         minutes = String(format: "%02d", timeRemaining/60)
         seconds = String(format: "%02d", timeRemaining%60)
-        buttonLabel.setTitle("\(minutes):\(seconds)", for: .normal)
+        timeLabel.text = ("\(minutes):\(seconds)")
     }
     @objc func restStep() {
         if timeRemaining > 0 {
@@ -96,11 +107,12 @@ class ViewController: UIViewController {
         }else {
             timer.invalidate()
             timeRemaining = 15
+            startButton.setTitle("Start", for: .normal)
             AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
         }
         minutes = String(format: "%02d", timeRemaining/60)
         seconds = String(format: "%02d", timeRemaining%60)
-        buttonLabel.setTitle("\(minutes):\(seconds)", for: .normal)
+        timeLabel.text = ("\(minutes):\(seconds)")
         
     }
     
