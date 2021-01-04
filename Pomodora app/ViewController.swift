@@ -69,14 +69,16 @@ class ViewController: UIViewController {
     
     func resetAlert() {
         let alert = UIAlertController(title: "End Session", message: "Do you want to end this session?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "YES", style: .default, handler:{ _ in
-            self.timer.invalidate()
-            self.timeRemaining = 1500
-            self.minutes = String(format: "%02d", self.timeRemaining/60)
-            self.seconds = String(format: "%02d", self.timeRemaining%60)
-            self.timeLabel.text = ("\(self.minutes):\(self.seconds)")
-            self.startButton.setTitle("Start", for: .normal)
-            self.rest = !self.rest
+        alert.addAction(UIAlertAction(title: "YES", style: .default, handler:{
+            [weak self] _ in
+            guard let superSelf = self else { return }
+            superSelf.timer.invalidate()
+            superSelf.timeRemaining = 1500
+            superSelf.minutes = String(format: "%02d", superSelf.timeRemaining/60)
+            superSelf.seconds = String(format: "%02d", superSelf.timeRemaining%60)
+            superSelf.timeLabel.text = ("\(superSelf.minutes):\(superSelf.seconds)")
+            superSelf.startButton.setTitle("Start", for: .normal)
+            superSelf.rest = !superSelf.rest
             
             
             
